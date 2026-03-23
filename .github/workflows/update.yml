@@ -2,127 +2,63 @@ name: Daily Sales Board Update
 
 on:
   push:
-      paths:
-            - 'data/**'
-                  - 'reports/**'
-                    schedule:
-                        - cron: '15 14 * * 1-5'
-                          workflow_dispatch:
-                          
-                          jobs:
-                            build:
-                                runs-on: ubuntu-latest
-                                    permissions:
-                                          contents: write
-                                                pages: write
-                                                      id-token: write
-                                                          steps:
-                                                                - name: Checkout
-                                                                        uses: actions/checkout@v4
-                                                                        
-                                                                              - name: Rename latest Excel to Sales Report.xlsx
-                                                                                      run: |
-                                                                                                cd data
-                                                                                                          LATEST=$(ls -t *.xlsx 2>/dev/null | head -1)
-                                                                                                                    if [ -n "$LATEST" ] && [ "$LATEST" != "Sales Report.xlsx" ]; then
-                                                                                                                                mv "$LATEST" "Sales Report.xlsx"
-                                                                                                                                            echo "Renamed $LATEST to Sales Report.xlsx"
-                                                                                                                                                      else
-                                                                                                                                                                  echo "File already named correctly or no xlsx found"
-                                                                                                                                                                            fi
-                                                                                                                                                                                      cd ..
-                                                                                                                                                                                                git config user.name "GitHub Actions Bot"
-                                                                                                                                                                                                          git config user.email "actions@github.com"
-                                                                                                                                                                                                                    git add data/
-                                                                                                                                                                                                                              git diff --staged --quiet || git commit -m "Auto-rename: Sales Report.xlsx"
-                                                                                                                                                                                                                                        git push || true
-                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                              - name: Set up Python
-                                                                                                                                                                                                                                                      uses: actions/setup-python@v5
-                                                                                                                                                                                                                                                              with:
-                                                                                                                                                                                                                                                                        python-version: '3.11'
-                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                              - name: Install dependencies
-                                                                                                                                                                                                                                                                                      run: pip install pandas openpyxl
-                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                            - name: Build sales board
-                                                                                                                                                                                                                                                                                                    run: python scripts/build.py
-                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                          - name: Commit updated index.html
-                                                                                                                                                                                                                                                                                                                  run: |
-                                                                                                                                                                                                                                                                                                                            git config user.name "GitHub Actions Bot"
-                                                                                                                                                                                                                                                                                                                                      git config user.email "actions@github.com"
-                                                                                                                                                                                                                                                                                                                                                git pull
-                                                                                                                                                                                                                                                                                                                                                          git add index.html
-                                                                                                                                                                                                                                                                                                                                                                    git diff --staged --quiet || git commit -m "Auto-update sales board"
-                                                                                                                                                                                                                                                                                                                                                                              git push
-                                                                                                                                                                                                                                                                                                                                                                              
-                                                                                                                                                                                                                                                                                                                                                                                    - name: Setup Pages
-                                                                                                                                                                                                                                                                                                                                                                                            uses: actions/configure-pages@v4
-                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                  - name: Upload artifact
-                                                                                                                                                                                                                                                                                                                                                                                                          uses: actions/upload-pages-artifact@v3
-                                                                                                                                                                                                                                                                                                                                                                                                                  with:
-                                                                                                                                                                                                                                                                                                                                                                                                                            path: '.'
-                                                                                                                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                  - name: Deploy to GitHub Pages
-                                                                                                                                                                                                                                                                                                                                                                                                                                          uses: actions/deploy-pages@v4ame: Daily Sales Board Update
+    schedule:
+        - cron: '15 14 * * 1-5'
+          workflow_dispatch:
 
-on:
-  repository_dispatch:
-    types: [upload-sales-report]
-  schedule:
-    - cron: '15 14 * * 1-5'
-  workflow_dispatch:
+          jobs:
+            build:
+                runs-on: ubuntu-latest
+                    permissions:
+                          contents: write
+                                pages: write
+                                      id-token: write
+                                          steps:
+                                                - name: Checkout
+                                                        uses: actions/checkout@v4
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Write Excel file from payload
-        if: github.event_name == 'repository_dispatch'
-        run: |
-          echo "${{ github.event.client_payload.file_content }}" | base64 -d > data/latest_report.xlsx
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          git add data/latest_report.xlsx
-          git diff --staged --quiet || git commit -m "Auto-update: new sales report received"
-          git push
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install pandas openpyxl
-
-      - name: Build sales board
-        run: python scripts/build.py
-
-      - name: Commit updated index.html
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          git pull
-          git add index.html
-          git diff --staged --quiet || git commit -m "Auto-update sales board"
-          git push
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+                                                              - name: Rename any Excel in data/ to Sales Report.xlsx
+                                                                      run: |
+                                                                                cd data
+                                                                                          LATEST=$(ls -t *.xlsx 2>/dev/null | head -1)
+                                                                                                    if [ -n "$LATEST" ] && [ "$LATEST" != "Sales Report.xlsx" ]; then
+                                                                                                                mv "$LATEST" "Sales Report.xlsx"
+                                                                                                                            echo "Renamed: $LATEST -> Sales Report.xlsx"
+                                                                                                                                      fi
+                                                                                                                                                cd ..
+                                                                                                                                                          git config user.name "GitHub Actions Bot"
+                                                                                                                                                                    git config user.email "actions@github.com"
+                                                                                                                                                                              git add data/
+                                                                                                                                                                                        git diff --staged --quiet || git commit -m "Auto-rename to Sales Report.xlsx"
+                                                                                                                                                                                                  git push || true
+                                                                                                                                                                                                  
+                                                                                                                                                                                                        - name: Set up Python
+                                                                                                                                                                                                                uses: actions/setup-python@v5
+                                                                                                                                                                                                                        with:
+                                                                                                                                                                                                                                  python-version: '3.11'
+                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                        - name: Install dependencies
+                                                                                                                                                                                                                                                run: pip install pandas openpyxl
+                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                      - name: Build sales board
+                                                                                                                                                                                                                                                              run: python scripts/build.py
+                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                    - name: Commit and push index.html
+                                                                                                                                                                                                                                                                            run: |
+                                                                                                                                                                                                                                                                                      git config user.name "GitHub Actions Bot"
+                                                                                                                                                                                                                                                                                                git config user.email "actions@github.com"
+                                                                                                                                                                                                                                                                                                          git pull
+                                                                                                                                                                                                                                                                                                                    git add index.html
+                                                                                                                                                                                                                                                                                                                              git diff --staged --quiet || git commit -m "Auto-update sales board"
+                                                                                                                                                                                                                                                                                                                                        git push
+                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                              - name: Setup Pages
+                                                                                                                                                                                                                                                                                                                                                      uses: actions/configure-pages@v4
+                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                                            - name: Upload artifact
+                                                                                                                                                                                                                                                                                                                                                                    uses: actions/upload-pages-artifact@v3
+                                                                                                                                                                                                                                                                                                                                                                            with:
+                                                                                                                                                                                                                                                                                                                                                                                      path: '.'
+                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                                                                                                            - name: Deploy to GitHub Pages
+                                                                                                                                                                                                                                                                                                                                                                                                    uses: actions/deploy-pages@v4
