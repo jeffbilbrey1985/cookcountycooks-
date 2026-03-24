@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Cache busting - forces browsers to always load fresh -->
+  <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script>
-    // Auto-reload: check every 60 seconds if a new version is available
-    // Compares the current page's ETag/last-modified against the server
+    // Auto-reload: detect new version every 60 seconds and reload automatically
     (function() {
-      const CHECK_INTERVAL = 60000; // 60 seconds
-      const pageLoadTime = Date.now();
-      function checkForUpdate() {
-        fetch(window.location.href, {
-          method: 'HEAD',
-          cache: 'no-cache',
-          headers: { 'Cache-Control': 'no-cache, no-store' }
-        }).then(function(r) {
-          const lastMod = r.headers.get('last-modified');
-          if (!window._lastMod) {
-            window._lastMod = lastMod;
-          } else if (lastMod && lastMod !== window._lastMod) {
-            // New version detected - reload!
-            window.location.reload(true);
-          }
-        }).catch(function(){});
+      var lastMod = null;
+      function checkUpdate() {
+        fetch(location.href + '?_=' + Date.now(), {cache: 'no-store'})
+          .then(function(r) {
+            var mod = r.headers.get('last-modified');
+            if (!lastMod) { lastMod = mod; }
+            else if (mod && mod !== lastMod) { location.reload(true); }
+          }).catch(function(){});
       }
-      // Start checking after 2 minutes (give time for initial load)
+      // Check every 60 seconds starting after 2 minutes
       setTimeout(function() {
-        checkForUpdate();
-        setInterval(checkForUpdate, CHECK_INTERVAL);
+        checkUpdate();
+        setInterval(checkUpdate, 60000);
       }, 120000);
     })();
   </script>
@@ -383,7 +374,7 @@ header{position:relative;z-index:10;flex-shrink:0;
     <img class="hdr-logo" src="LOGO_SRC" alt="C3">
     <div class="hdr-brand">
       <div class="hdr-name">COOK COUNTY <em>COOKS</em></div>
-      <div class="hdr-tag" id="hdr-tag">Daily Sales Report &nbsp;Â·&nbsp; REPORT_DATE</div>
+      <div class="hdr-tag" id="hdr-tag">Daily Sales Report &nbsp;·&nbsp; REPORT_DATE</div>
     </div>
   </div>
   <div class="hdr-c">
@@ -694,7 +685,7 @@ function buildRep(sc){
     return`<div class="store-block">
       <div class="sb-head">
         <div class="sb-store">${st}</div>
-        <div class="sb-count">${reps.length} Reps Â· By GP</div>
+        <div class="sb-count">${reps.length} Reps · By GP</div>
       </div>
       <div class="rep-cols" style="grid-template-columns:${colT};padding:4px 10px;">
         <span style="font-size:${hdS}">Natl #</span>
@@ -753,7 +744,7 @@ function show(idx){
   document.getElementById('sttl').textContent=sc.title;
   const tag=document.getElementById('hdr-tag');
   if(sc.id==='rep'&&sc.storeLabel) tag.textContent=sc.storeLabel;
-  else tag.textContent='Daily Sales Report Â Â·Â  23 Stores';
+  else tag.textContent='Daily Sales Report Â ·Â  23 Stores';
   document.getElementById('scur').textContent=idx+1;
   document.getElementById('content').innerHTML=getHTML(sc);
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
@@ -836,7 +827,7 @@ function tick(){
     M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0'),ap=h>=12?'PM':'AM';
   document.getElementById('clk').textContent=
-    `${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()} Â· ${h%12||12}:${m} ${ap}`;
+    `${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()} · ${h%12||12}:${m} ${ap}`;
 }
 tick();setInterval(tick,1000);
 
