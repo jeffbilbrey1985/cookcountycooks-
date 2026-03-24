@@ -1,9 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Cache busting - forces browsers to always load fresh -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script>
+    // Auto-reload: check every 60 seconds if a new version is available
+    // Compares the current page's ETag/last-modified against the server
+    (function() {
+      const CHECK_INTERVAL = 60000; // 60 seconds
+      const pageLoadTime = Date.now();
+      function checkForUpdate() {
+        fetch(window.location.href, {
+          method: 'HEAD',
+          cache: 'no-cache',
+          headers: { 'Cache-Control': 'no-cache, no-store' }
+        }).then(function(r) {
+          const lastMod = r.headers.get('last-modified');
+          if (!window._lastMod) {
+            window._lastMod = lastMod;
+          } else if (lastMod && lastMod !== window._lastMod) {
+            // New version detected - reload!
+            window.location.reload(true);
+          }
+        }).catch(function(){});
+      }
+      // Start checking after 2 minutes (give time for initial load)
+      setTimeout(function() {
+        checkForUpdate();
+        setInterval(checkForUpdate, CHECK_INTERVAL);
+      }, 120000);
+    })();
+  </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cook County Cooks — Daily Sales Report</title>
+<title>Cook County Cooks â Daily Sales Report</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -15,7 +47,7 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;background:var(--bg);font-family:'Barlow Condensed',sans-serif;color:var(--white);overflow:hidden;}
 
-/* ── FRAME ── */
+/* ââ FRAME ââ */
 html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;background:var(--bg);}
 #wrap{
   position:fixed;inset:0;
@@ -24,7 +56,7 @@ html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;background
   overflow:hidden;
 }
 #slide{
-  /* Fixed 16:9 canvas — JS scales it to fill viewport */
+  /* Fixed 16:9 canvas â JS scales it to fill viewport */
   width:1280px;height:720px;
   flex-shrink:0;
   background:var(--bg);
@@ -43,7 +75,7 @@ html,body{margin:0;padding:0;width:100vw;height:100vh;overflow:hidden;background
   background:radial-gradient(ellipse 700px 400px at -5% 50%,rgba(41,121,255,.07) 0%,transparent 60%),
     radial-gradient(ellipse 500px 500px at 105% 50%,rgba(255,98,0,.05) 0%,transparent 60%);}
 
-/* ── HEADER ── */
+/* ââ HEADER ââ */
 header{position:relative;z-index:10;flex-shrink:0;
   display:flex;align-items:center;justify-content:space-between;
   height:72px;padding:0 24px;
@@ -73,7 +105,7 @@ header{position:relative;z-index:10;flex-shrink:0;
 @keyframes lp{0%,100%{opacity:1}50%{opacity:.15}}
 .clk{font-size:.65rem;color:var(--dim);letter-spacing:1px;}
 
-/* ── NAV ── */
+/* ââ NAV ââ */
 .nav{position:relative;z-index:10;flex-shrink:0;display:flex;align-items:center;gap:10px;
   height:26px;padding:0 24px;background:rgba(2,6,14,.9);
   border-bottom:1px solid rgba(41,121,255,.1);}
@@ -91,12 +123,12 @@ header{position:relative;z-index:10;flex-shrink:0;
   font-family:'Oswald',sans-serif;font-size:.6rem;letter-spacing:2px;color:var(--blue2);transition:all .2s;}
 .menu-btn:hover{background:rgba(41,121,255,.22);border-color:var(--blue2);}
 
-/* ── CONTENT ── */
+/* ââ CONTENT ââ */
 .content{flex:1;position:relative;z-index:5;overflow:hidden;display:flex;flex-direction:column;}
 
-/* ══════════════════════════════════════════════
-   OVERVIEW CARDS  4 × 3 = 12 per page
-══════════════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââââââââââ
+   OVERVIEW CARDS  4 Ã 3 = 12 per page
+ââââââââââââââââââââââââââââââââââââââââââââââ */
 .ov-grid{display:grid;grid-template-columns:repeat(4,1fr);
   grid-template-rows:repeat(3,1fr);gap:5px;flex:1;padding:6px 12px 8px;}
 .sc{background:var(--card);border-radius:8px;position:relative;overflow:hidden;
@@ -131,10 +163,10 @@ header{position:relative;z-index:10;flex-shrink:0;
 .cg .chip-v{color:var(--green);}.ca .chip-v{color:var(--amber);}
 .cr .chip-v{color:var(--red);}.cb .chip-v{color:var(--blue2);}
 
-/* ══════════════════════════════════════════════
-   ALL-23 RANKER  — single scrollable table
+/* ââââââââââââââââââââââââââââââââââââââââââââââ
+   ALL-23 RANKER  â single scrollable table
    Used for all metric screens
-══════════════════════════════════════════════ */
+ââââââââââââââââââââââââââââââââââââââââââââââ */
 /* Category banner */
 .cat-banner{
   display:flex;align-items:center;
@@ -158,7 +190,7 @@ header{position:relative;z-index:10;flex-shrink:0;
 .cstat-l{font-size:.52rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
 .cstat-v{font-family:'Oswald',sans-serif;font-size:1.2rem;font-weight:700;line-height:1;}
 
-/* Two-column ranker grid — all 23 stores visible */
+/* Two-column ranker grid â all 23 stores visible */
 .ranker-grid{display:grid;grid-template-columns:1fr 1fr;
   gap:3px;padding:5px 12px 6px;flex:1;align-content:start;}
 .rrow{display:flex;align-items:stretch;background:var(--card);
@@ -189,10 +221,10 @@ header{position:relative;z-index:10;flex-shrink:0;
 .rr-b span{font-size:.52rem;letter-spacing:1.5px;text-transform:uppercase;
   color:rgba(255,255,255,.48);font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:2px;}
 
-/* ══════════════════════════════════════════════
-   DEVICE MIX SLIDE  — special layout
-══════════════════════════════════════════════ */
-/* All 23 in one table — 3 columns of data */
+/* ââââââââââââââââââââââââââââââââââââââââââââââ
+   DEVICE MIX SLIDE  â special layout
+ââââââââââââââââââââââââââââââââââââââââââââââ */
+/* All 23 in one table â 3 columns of data */
 .device-grid{display:grid;grid-template-columns:1fr 1fr;
   gap:3px;padding:5px 12px 6px;flex:1;align-content:start;}
 .drow{display:flex;align-items:stretch;background:var(--card);
@@ -213,9 +245,9 @@ header{position:relative;z-index:10;flex-shrink:0;
 .dr-stat span{font-size:.5rem;letter-spacing:1.5px;text-transform:uppercase;
   color:rgba(255,255,255,.45);font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:1px;}
 
-/* ══════════════════════════════════════════════
-   REP SLIDES  — side-by-side store columns
-══════════════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââââââââââ
+   REP SLIDES  â side-by-side store columns
+ââââââââââââââââââââââââââââââââââââââââââââââ */
 .rep-slide{display:flex;flex-direction:row;flex:1;padding:5px 12px 7px;gap:6px;overflow:hidden;}
 .store-block{flex:1;background:var(--card);border:1px solid rgba(41,121,255,.18);
   border-radius:8px;overflow:hidden;display:flex;flex-direction:column;
@@ -253,9 +285,9 @@ header{position:relative;z-index:10;flex-shrink:0;
 .rp-gp{font-family:'Oswald',sans-serif;font-weight:700;color:var(--orange2);text-align:center;}
 .rp-gig,.rp-prem,.rp-acc{font-family:'Oswald',sans-serif;font-weight:600;text-align:center;}
 
-/* ══════════════════════════════════════════════
+/* ââââââââââââââââââââââââââââââââââââââââââââââ
    SLIDE PICKER
-══════════════════════════════════════════════ */
+ââââââââââââââââââââââââââââââââââââââââââââââ */
 #picker-overlay{display:none;position:fixed;inset:0;z-index:9800;
   background:rgba(0,0,0,.87);backdrop-filter:blur(12px);
   align-items:center;justify-content:center;}
@@ -292,7 +324,7 @@ header{position:relative;z-index:10;flex-shrink:0;
 .rg{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,.5);}
 .rn{color:var(--green);}.ro{color:var(--orange2);}.rb{color:var(--blue2);}.rrc{color:#ff6060;}
 
-/* ── ADMIN ── */
+/* ââ ADMIN ââ */
 #gbtn{position:fixed;bottom:16px;right:16px;z-index:9000;width:42px;height:42px;border-radius:50%;
   background:rgba(2,6,14,.95);border:1.5px solid rgba(255,98,0,.4);color:var(--orange);
   font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -351,7 +383,7 @@ header{position:relative;z-index:10;flex-shrink:0;
     <img class="hdr-logo" src="LOGO_SRC" alt="C3">
     <div class="hdr-brand">
       <div class="hdr-name">COOK COUNTY <em>COOKS</em></div>
-      <div class="hdr-tag" id="hdr-tag">Daily Sales Report &nbsp;·&nbsp; REPORT_DATE</div>
+      <div class="hdr-tag" id="hdr-tag">Daily Sales Report &nbsp;Â·&nbsp; REPORT_DATE</div>
     </div>
   </div>
   <div class="hdr-c">
@@ -365,10 +397,10 @@ header{position:relative;z-index:10;flex-shrink:0;
 </header>
 
 <div class="nav">
-  <div class="sc-ctr">Slide <b id="scur">1</b> of <b id="stot">—</b></div>
+  <div class="sc-ctr">Slide <b id="scur">1</b> of <b id="stot">â</b></div>
   <div class="prog"><div class="prog-f" id="pf"></div></div>
   <div class="nav-btns">
-    <div class="menu-btn" onclick="openPicker()">☰ SLIDES</div>
+    <div class="menu-btn" onclick="openPicker()">â° SLIDES</div>
     <div class="dots" id="dots"></div>
   </div>
 </div>
@@ -380,29 +412,29 @@ header{position:relative;z-index:10;flex-shrink:0;
 <div id="picker-overlay">
   <div id="picker-box">
     <div class="picker-head">
-      <h2>📋 Choose a Slide</h2>
-      <button class="picker-close" onclick="closePicker()">✕</button>
+      <h2>ð Choose a Slide</h2>
+      <button class="picker-close" onclick="closePicker()">â</button>
     </div>
     <div class="picker-body" id="picker-body"></div>
   </div>
 </div>
 
 <!-- GEAR -->
-<button id="gbtn" onclick="tg()" title="Admin">⚙</button>
+<button id="gbtn" onclick="tg()" title="Admin">â</button>
 <div id="gmenu">
-  <div class="gi" onclick="om('up')">📊 Upload Sales Report</div>
-  <div class="gi" onclick="om('pr')">🎯 Upload Promo Image</div>
-  <div class="gi" onclick="openPicker();cg()">📋 Slide Menu</div>
-  <div class="gi" onclick="tp()">⏸ Pause / Resume</div>
-  <div class="gi" onclick="cg()">✕ Close</div>
+  <div class="gi" onclick="om('up')">ð Upload Sales Report</div>
+  <div class="gi" onclick="om('pr')">ð¯ Upload Promo Image</div>
+  <div class="gi" onclick="openPicker();cg()">ð Slide Menu</div>
+  <div class="gi" onclick="tp()">â¸ Pause / Resume</div>
+  <div class="gi" onclick="cg()">â Close</div>
 </div>
 
 <div class="ov-modal" id="ov-up">
   <div class="modal">
-    <h2>🔒 ADMIN</h2><p>Password required to upload a sales report.</p>
+    <h2>ð ADMIN</h2><p>Password required to upload a sales report.</p>
     <div id="up-pw">
       <div class="fld"><label>Password</label>
-        <input type="password" id="pw-in" placeholder="Enter password…" onkeydown="if(event.key==='Enter')chkPW()">
+        <input type="password" id="pw-in" placeholder="Enter passwordâ¦" onkeydown="if(event.key==='Enter')chkPW()">
       </div>
       <div class="merr" id="pw-err">Incorrect password.</div>
       <button class="mbtn" onclick="chkPW()">Unlock</button>
@@ -410,7 +442,7 @@ header{position:relative;z-index:10;flex-shrink:0;
     </div>
     <div id="up-file" style="display:none">
       <div class="fld"><label>Sales Report (.xlsx)</label><input type="file" id="file-in" accept=".xlsx"></div>
-      <div class="mok" id="up-ok">✓ Report loaded!</div>
+      <div class="mok" id="up-ok">â Report loaded!</div>
       <div class="merr" id="up-err">Error reading file.</div>
       <button class="mbtn" onclick="loadXL()">Load Report</button>
       <button class="mbtn sec" onclick="cm('up')">Close</button>
@@ -419,10 +451,10 @@ header{position:relative;z-index:10;flex-shrink:0;
 </div>
 <div class="ov-modal" id="ov-pr">
   <div class="modal">
-    <h2>🎯 PROMO UPLOAD</h2><p>Upload today's promotions image.</p>
+    <h2>ð¯ PROMO UPLOAD</h2><p>Upload today's promotions image.</p>
     <div id="pr-pw">
       <div class="fld"><label>Password</label>
-        <input type="password" id="pr-in" placeholder="Enter password…" onkeydown="if(event.key==='Enter')chkPrPW()">
+        <input type="password" id="pr-in" placeholder="Enter passwordâ¦" onkeydown="if(event.key==='Enter')chkPrPW()">
       </div>
       <div class="merr" id="pr-err">Incorrect password.</div>
       <button class="mbtn" onclick="chkPrPW()">Unlock</button>
@@ -430,7 +462,7 @@ header{position:relative;z-index:10;flex-shrink:0;
     </div>
     <div id="pr-file" style="display:none">
       <div class="fld"><label>Promo Image (JPG/PNG)</label><input type="file" id="promo-in" accept="image/*"></div>
-      <div class="mok" id="pr-ok">✓ Promo loaded!</div>
+      <div class="mok" id="pr-ok">â Promo loaded!</div>
       <button class="mbtn" onclick="loadPr()">Load Image</button>
       <button class="mbtn sec" onclick="cm('pr')">Close</button>
     </div>
@@ -440,37 +472,37 @@ header{position:relative;z-index:10;flex-shrink:0;
 <script>
 const PW='Password123!', TICK=15000;
 
-/* ══ CATEGORY DEFINITIONS (all correct columns + weights) ══ */
+/* ââ CATEGORY DEFINITIONS (all correct columns + weights) ââ */
 const CATS={
   gp_trend:{name:'Gross Profit Trend',       abbr:'GP TREND',   pts:20, pct:'20%',
-    desc:'Fiscal GP trend dollar amount — foundation of your total score'},
+    desc:'Fiscal GP trend dollar amount â foundation of your total score'},
   mcr:     {name:'Mobile Close Rate',        abbr:'MCR',        pts:25, pct:'25%',
-    desc:'% of internet customers who also purchased mobile — highest weighted metric'},
-  fcr:     {name:'Fiscal Close Rate',        abbr:'FCR',        pts:null,pct:'—',
+    desc:'% of internet customers who also purchased mobile â highest weighted metric'},
+  fcr:     {name:'Fiscal Close Rate',        abbr:'FCR',        pts:null,pct:'â',
     desc:'Overall rate of closing new accounts across all products'},
   nt:      {name:'Non-Traditional Close Rate',abbr:'NON-TRAD CR',pts:10, pct:'10%',
     desc:'Close rate on non-traditional products: tablets, watches, accessories'},
   gig:     {name:'GIG Internet Attach',      abbr:'GIG ATTACH', pts:10, pct:'10%',
-    desc:'% of internet sales on GIG plans (≥180 commission tier) — Target: 80%+'},
-  device:  {name:'Device Mix',               abbr:'DEVICE MIX', pts:null,pct:'—',
+    desc:'% of internet sales on GIG plans (â¥180 commission tier) â Target: 80%+'},
+  device:  {name:'Device Mix',               abbr:'DEVICE MIX', pts:null,pct:'â',
     desc:'Total Mobile units + Tablet + Watches sold MTD per store'},
   prem:    {name:'Premium Mix',              abbr:'PREMIUM MIX',pts:5,  pct:'5%',
-    desc:'% of mobile sales on Premium Unlimited plan — Target: 60%+'},
+    desc:'% of mobile sales on Premium Unlimited plan â Target: 60%+'},
   n2u:     {name:'New To Upgrades',          abbr:'NEW-TO-UPGR', pts:10, pct:'10%',
-    desc:'% of mobile sales that are new lines (not upgrades) — Target: 40%+'},
+    desc:'% of mobile sales that are new lines (not upgrades) â Target: 40%+'},
   apd:     {name:'Accessory Per Device',     abbr:'ACC/DEVICE',  pts:10, pct:'10%',
-    desc:'Net accessory revenue divided by total devices sold — Target: $30+'},
+    desc:'Net accessory revenue divided by total devices sold â Target: $30+'},
   nps:     {name:'Net Promoter Score',       abbr:'NPS',         pts:15, pct:'15%',
-    desc:'Customer satisfaction score — likelihood to recommend — Target: 82%+'},
+    desc:'Customer satisfaction score â likelihood to recommend â Target: 82%+'},
 };
 
-/* ══ STORE DATA ══ */
+/* ââ STORE DATA ââ */
 let SD=SD_PLACEHOLDER;
 
-/* ══ REP DATA ══ */
+/* ââ REP DATA ââ */
 let RD=RD_PLACEHOLDER;
 
-/* ══ REP GROUPS — labeled by store names ══ */
+/* ââ REP GROUPS â labeled by store names ââ */
 const REP_GROUPS=[
   {label:'Frankfort & Burbank',               stores:['Frankfort','Burbank']},
   {label:'Evergreen Park & Tinley Park',       stores:['Evergreen Park','Tinley Park']},
@@ -488,7 +520,7 @@ const REP_GROUPS=[
 let promoImg=null, paused=false, cur=0, pi=null;
 let SCREENS=[];
 
-/* ══ HELPERS ══ */
+/* ââ HELPERS ââ */
 const f$=n=>'$'+Math.round(n).toLocaleString();
 const fp=n=>(n*100).toFixed(1)+'%';
 const vc=(v,g,w)=>v>=g?'vg':v>=w?'va':'vr';
@@ -498,7 +530,7 @@ const tier=r=>r<=5?'c1':r<=20?'c2':r<=50?'c3':r<=90?'c4':'c5';
 const trow=r=>r<=5?'t1':r<=20?'t2':r<=50?'t3':r<=90?'t4':'t5';
 const rCol=r=>r<=5?'rg':r<=20?'rn':r<=50?'ro':r<=90?'rb':'rrc';
 
-/* ══ SCREEN LIST ══ */
+/* ââ SCREEN LIST ââ */
 function mkScreens(){
   const sorted=[...SD].sort((a,b)=>a.rank-b.rank);
   const out=[];
@@ -507,7 +539,7 @@ function mkScreens(){
     const pg=Math.floor(i/12)+1, tot=Math.ceil(sorted.length/12);
     out.push({id:'ov', title:'STORE OVERVIEW', sub:`Page ${pg} of ${tot}`, stores:sorted.slice(i,i+12)});
   }
-  // Metric rankers — all 23 stores on one slide each
+  // Metric rankers â all 23 stores on one slide each
   out.push({id:'rank', key:'gp_trend', title:'GP TREND RANKER',            cat:CATS.gp_trend,
     fmt:f$, good:60000,warn:35000, s1:'mcr', s1l:'Mobile Close Rate', s1f:fp, s1g:.09,s1w:.065,
     s2:'nps',s2l:'NPS Score', s2f:fp, s2g:.82,s2w:.72});
@@ -545,7 +577,7 @@ function mkScreens(){
   return out;
 }
 
-/* ══ BUILD: OVERVIEW ══ */
+/* ââ BUILD: OVERVIEW ââ */
 function buildOV(stores){
   const cards=stores.map(d=>`
     <div class="sc ${tier(d.rank)}">
@@ -562,7 +594,7 @@ function buildOV(stores){
   return`<div class="ov-grid">${cards}</div>`;
 }
 
-/* ══ BUILD: RANKER (all 23 in 2 columns) ══ */
+/* ââ BUILD: RANKER (all 23 in 2 columns) ââ */
 function buildRanker(sc){
   const {key,fmt,good,warn,s1,s1l,s1f,s1g,s1w,s2,s2l,s2f,s2g,s2w,cat}=sc;
   const ranked=[...SD].sort((a,b)=>b[key]-a[key]);
@@ -570,7 +602,7 @@ function buildRanker(sc){
   const top=ranked[0];
   const ptsHTML=cat&&cat.pts
     ?`<div class="cat-pts"><div class="cat-pts-num">${cat.pct}</div><div class="cat-pts-lbl">of Score</div></div>`
-    :`<div class="cat-pts" style="border-color:rgba(41,121,255,.4);background:rgba(41,121,255,.1)"><div class="cat-pts-num" style="color:var(--blue2)">—</div><div class="cat-pts-lbl" style="color:var(--blue2)">No Points</div></div>`;
+    :`<div class="cat-pts" style="border-color:rgba(41,121,255,.4);background:rgba(41,121,255,.1)"><div class="cat-pts-num" style="color:var(--blue2)">â</div><div class="cat-pts-lbl" style="color:var(--blue2)">No Points</div></div>`;
   const banner=`<div class="cat-banner">
     <div class="cat-main">
       <div class="cat-name">${cat?cat.name:sc.title}</div>
@@ -579,7 +611,7 @@ function buildRanker(sc){
     ${ptsHTML}
     <div class="cat-stats">
       <div class="cstat"><div class="cstat-l">Avg</div><div class="cstat-v ${vc(avg,good,warn)}">${fmt(avg)}</div></div>
-      <div class="cstat"><div class="cstat-l">🥇 Best</div><div class="cstat-v vo">${top.s} <span style="font-size:.85rem;opacity:.7">${fmt(top[key])}</span></div></div>
+      <div class="cstat"><div class="cstat-l">ð¥ Best</div><div class="cstat-v vo">${top.s} <span style="font-size:.85rem;opacity:.7">${fmt(top[key])}</span></div></div>
       <div class="cstat"><div class="cstat-l">Above Target</div><div class="cstat-v vb">${SD.filter(x=>x[key]>=good).length} / ${SD.length}</div></div>
     </div>
   </div>`;
@@ -598,7 +630,7 @@ function buildRanker(sc){
   return banner+`<div class="ranker-grid">${rows}</div>`;
 }
 
-/* ══ BUILD: DEVICE MIX ══ */
+/* ââ BUILD: DEVICE MIX ââ */
 function buildDevice(){
   const sorted=[...SD].sort((a,b)=>b.mob-a.mob);
   const totMob=SD.reduce((s,x)=>s+x.mob,0);
@@ -607,7 +639,7 @@ function buildDevice(){
   const banner=`<div class="cat-banner">
     <div class="cat-main">
       <div class="cat-name">Device Mix</div>
-      <div class="cat-desc">Total Mobile, Tablet & Watch units sold MTD — all 23 stores</div>
+      <div class="cat-desc">Total Mobile, Tablet & Watch units sold MTD â all 23 stores</div>
     </div>
     <div class="cat-pts" style="border-color:rgba(41,121,255,.4);background:rgba(41,121,255,.1)">
       <div class="cat-pts-num" style="color:var(--blue2)">${totMob}</div>
@@ -631,7 +663,7 @@ function buildDevice(){
   return banner+`<div class="device-grid">${rows}</div>`;
 }
 
-/* ══ BUILD: REP SLIDE ══ */
+/* ââ BUILD: REP SLIDE ââ */
 function buildRep(sc){
   const storeNames=sc.stores;
   const n=storeNames.length;
@@ -662,7 +694,7 @@ function buildRep(sc){
     return`<div class="store-block">
       <div class="sb-head">
         <div class="sb-store">${st}</div>
-        <div class="sb-count">${reps.length} Reps · By GP</div>
+        <div class="sb-count">${reps.length} Reps Â· By GP</div>
       </div>
       <div class="rep-cols" style="grid-template-columns:${colT};padding:4px 10px;">
         <span style="font-size:${hdS}">Natl #</span>
@@ -678,27 +710,27 @@ function buildRep(sc){
   return`<div class="rep-slide">${blocks}</div>`;
 }
 
-/* ══ BUILD: PROMO ══ */
+/* ââ BUILD: PROMO ââ */
 function buildPromo(){
   if(promoImg)return`<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 12px 10px"><img src="${promoImg}" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;"></div>`;
-  const mob=['TIPs Up to $1,100 off select Samsung w/ Premium Unl — New Line or Elite Upgrade','TIPs Up to $500 off select Samsung w/ Unlimited — New Line or Upgrade','TIPs Up to $830 off Apple/Google/Motorola w/ Premium Unl — New Line or Elite Upgrade','$500 off select Samsung w/ Premium Unl — New Line or Elite Upgrade','$200 off select Samsung w/ Unlimited — New Line or Upgrade','$400 off Apple/Samsung/Google/Motorola w/ Premium Unl — New Line or Elite Upgrade','1 free XM line 12 months — NEW Next Gen Internet customers','1 free XM line 12 months — Legacy internet NOT repackaging (new to XM)','1 free XM line 12 months — Legacy internet repackaging to Next Gen (new to XM)','50% off XMC 3 months — new watches & tablets','One-time Waived Activation Fee (mobile, smartwatches, tablets)','$200 Prepaid Mastercard when adding 2+ new lines','50% off iPhone 17e w/ TIPs & Unlimited','iPhone 17e "On Us" w/ TIPs & Premium Unlimited','$400 off iPhone 17e w/ Premium Unlimited'];
+  const mob=['TIPs Up to $1,100 off select Samsung w/ Premium Unl â New Line or Elite Upgrade','TIPs Up to $500 off select Samsung w/ Unlimited â New Line or Upgrade','TIPs Up to $830 off Apple/Google/Motorola w/ Premium Unl â New Line or Elite Upgrade','$500 off select Samsung w/ Premium Unl â New Line or Elite Upgrade','$200 off select Samsung w/ Unlimited â New Line or Upgrade','$400 off Apple/Samsung/Google/Motorola w/ Premium Unl â New Line or Elite Upgrade','1 free XM line 12 months â NEW Next Gen Internet customers','1 free XM line 12 months â Legacy internet NOT repackaging (new to XM)','1 free XM line 12 months â Legacy internet repackaging to Next Gen (new to XM)','50% off XMC 3 months â new watches & tablets','One-time Waived Activation Fee (mobile, smartwatches, tablets)','$200 Prepaid Mastercard when adding 2+ new lines','50% off iPhone 17e w/ TIPs & Unlimited','iPhone 17e "On Us" w/ TIPs & Premium Unlimited','$400 off iPhone 17e w/ Premium Unlimited'];
   const mH=mob.map(t=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.7rem;line-height:1.4;color:var(--white)"><div style="width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:3px;"></div><span>${t}</span></div>`).join('')+`<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:.7rem;color:var(--white)"><div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;margin-top:3px;"></div><span>50% off Samsung Tab A11+ <span style="font-size:.5rem;background:var(--green);color:#000;font-weight:700;padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:middle;">NEW</span></span></div>`;
   return`<div style="flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:8px;padding:8px 12px 10px;">
     <div style="background:var(--card);border:1px solid rgba(41,121,255,.15);border-radius:8px;padding:10px 14px;overflow:auto;">
-      <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">📱 Mobile Promotions</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">ð± Mobile Promotions</div>
       ${mH}
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;overflow:hidden">
       <div style="background:var(--card);border:1px solid rgba(41,121,255,.15);border-radius:8px;padding:10px 14px;flex:0 0 auto;">
-        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">🔵 NOW Mobile</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">ðµ NOW Mobile</div>
         <div style="font-size:.7rem;color:var(--dim);">No NOW Mobile promotions currently</div>
       </div>
       <div style="background:var(--card);border:1px solid rgba(41,121,255,.15);border-radius:8px;padding:10px 14px;flex:0 0 auto;">
-        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">💎 Xfinity Membership</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(255,98,0,.2);">ð Xfinity Membership</div>
         <div style="font-size:.7rem;color:var(--white);">$300 off select smartwatches for DIAMOND Xfinity Membership customers</div>
       </div>
       <div style="background:var(--card);border:1.5px solid rgba(255,98,0,.3);background:rgba(255,98,0,.04);border-radius:8px;padding:12px 14px;flex:1;">
-        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;">💬 Daily Mindset</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;">ð¬ Daily Mindset</div>
         <p style="font-size:.74rem;color:var(--orange2);line-height:1.65;font-style:italic">"Refuse to attach a negative meaning to the word 'no'. View it as feedback. 'No' tells you to change your approach, create more value or try again later."</p>
         <p style="margin-top:10px;font-family:'Oswald',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--orange);">PITCH MOBILE &amp; NPS TO EVERYONE!</p>
       </div>
@@ -706,7 +738,7 @@ function buildPromo(){
   </div>`;
 }
 
-/* ══ RENDER ══ */
+/* ââ RENDER ââ */
 function getHTML(sc){
   if(sc.id==='ov')     return buildOV(sc.stores);
   if(sc.id==='rank')   return buildRanker(sc);
@@ -721,7 +753,7 @@ function show(idx){
   document.getElementById('sttl').textContent=sc.title;
   const tag=document.getElementById('hdr-tag');
   if(sc.id==='rep'&&sc.storeLabel) tag.textContent=sc.storeLabel;
-  else tag.textContent='Daily Sales Report  ·  23 Stores';
+  else tag.textContent='Daily Sales Report Â Â·Â  23 Stores';
   document.getElementById('scur').textContent=idx+1;
   document.getElementById('content').innerHTML=getHTML(sc);
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===idx));
@@ -749,7 +781,7 @@ function buildNav(){
     SCREENS.map((_,i)=>`<div class="dot${i===0?' on':''}" onclick="jump(${i})"></div>`).join('');
 }
 
-/* ══ SLIDE PICKER ══ */
+/* ââ SLIDE PICKER ââ */
 function buildPicker(){
   const secs=[
     {lbl:'Store Overview',    filter:s=>s.id==='ov'},
@@ -762,7 +794,7 @@ function buildPicker(){
     if(!items.length)return'';
     const btns=items.map(({s,i})=>`
       <div class="pitem${i===cur?' on':''}" onclick="jump(${i});closePicker()">
-        ${s.title}${s.sub?' — '+s.sub:''}
+        ${s.title}${s.sub?' â '+s.sub:''}
       </div>`).join('');
     return`<div class="picker-section">
       <div class="picker-section-lbl">${sec.lbl}</div>
@@ -780,7 +812,7 @@ function closePicker(){
   paused=false;startProg();
 }
 
-/* ══ SCALER ══ */
+/* ââ SCALER ââ */
 function scale(){
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -804,7 +836,7 @@ function tick(){
     M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const h=n.getHours(),m=String(n.getMinutes()).padStart(2,'0'),ap=h>=12?'PM':'AM';
   document.getElementById('clk').textContent=
-    `${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()} · ${h%12||12}:${m} ${ap}`;
+    `${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()} Â· ${h%12||12}:${m} ${ap}`;
 }
 tick();setInterval(tick,1000);
 
