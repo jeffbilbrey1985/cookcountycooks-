@@ -1,0 +1,29 @@
+Attachment from email received from reports@blufoxmobile.com
+
+Subject: Blufox - Sales Report
+Received: 2026-03-25T11:22:14Z
+
+Attachment details:
+@odata.mediaContentType: image/png
+@odata.type: #microsoft.graph.fileAttachment
+contentType: image/png
+file: https://zapier-dev-files.s3.amazonaws.com/cli-platform/20537/-yE532OBBmiAiLfyOnJm0fayxiwFyJX8KEtEDmKizcNG4_dYwXvIjhc2YnYKSl0xe-W1eOIYjraggwY3wrZGKaachUWP_uNuD_jiCeepjVC4OMqFa4wI36Ymz3ZWSadmtJqlzjKDbPxjaCIA3Xg5nJHkZBDJ1K_mWeNXtvImtZc
+fileName: Outlook-erh1fd5f
+fileType: .png
+id: AAMkAGYzMmNiNWQ0LTczOGMtNGZjOC1iNTRjLTY2MjY5ZTkwMjY2MwBGAAAAAADmHMOmpVl7R4KoW7aF0xN_BwAhe7XbRV-pQobVmpYx4MbKAAAAAAEMAAAhe7XbRV-pQobVmpYx4MbKAAUeRcQCAAABEgAQAOdfGx69tLNOqPbSXbYINME=
+isInline: True
+lastModifiedDateTime: 2026-03-25T11:22:11Z
+name: Outlook-erh1fd5f.png
+size: 20346
+
+@odata.mediaContentType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+@odata.type: #microsoft.graph.fileAttachment
+contentType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+file: https://zapier-dev-files.s3.amazonaws.com/cli-platform/20537/b4PH9TCPLh-wZFYIbLkUIIfqW8yhlBFUeek3BUK385f9tyCg7b8sqsBMGPK6zXKFyil2Y3A-iY5NziSnEEKSafGqRKWG0Jt-Yu4U7FofP_vinKPnv3Hphunj5j6N1Z2bs_oAIbo2DjY167TaFiPhdciinpCz7eK3z7wqwu3DxRQ
+fileName: Blufox - Sales Report Mar 24 2026
+fileType: .xlsx
+id: AAMkAGYzMmNiNWQ0LTczOGMtNGZjOC1iNTRjLTY2MjY5ZTkwMjY2MwBGAAAAAADmHMOmpVl7R4KoW7aF0xN_BwAhe7XbRV-pQobVmpYx4MbKAAAAAAEMAAAhe7XbRV-pQobVmpYx4MbKAAUeRcQCAAABEgAQAGf1YEll2ntOkBT5ethkGDA=
+isInline: False
+lastModifiedDateTime: 2026-03-25T11:22:12Z
+name: Blufox - Sales Report Mar 24 2026.xlsx
+size: 986354
